@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"ffuf/pkg/ffuf"
+	"github.com/heckintosh/ffuf/pkg/ffuf"
 )
 
 type RegexpFilter struct {

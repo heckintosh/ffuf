@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"ffuf/pkg/ffuf"
+	"github.com/heckintosh/ffuf/pkg/ffuf"
 )
 
 type htmlFileOutput struct {

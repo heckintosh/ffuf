@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"ffuf/pkg/ffuf"
+	"github.com/heckintosh/ffuf/pkg/ffuf"
 )
 
 func TestToCSV(t *testing.T) {

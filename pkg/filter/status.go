@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"ffuf/pkg/ffuf"
+	"github.com/heckintosh/ffuf/pkg/ffuf"
 )
 
 const AllStatuses = 0

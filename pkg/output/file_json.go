@@ -5,7 +5,7 @@ import (
 	"io/ioutil"
 	"time"
 
-	"ffuf/pkg/ffuf"
+	"github.com/heckintosh/ffuf/pkg/ffuf"
 )
 
 type ejsonFileOutput struct {

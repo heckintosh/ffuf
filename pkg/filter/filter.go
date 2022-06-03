@@ -1,8 +1,8 @@
 package filter
 
 import (
-	"ffuf/pkg/ffuf"
 	"fmt"
+	"github.com/heckintosh/ffuf/pkg/ffuf"
 	"sync"
 )
 
