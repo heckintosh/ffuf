@@ -3,6 +3,7 @@ package filter
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/heckintosh/ffuf/pkg/ffuf"
 	"strconv"
 	"strings"
 )
