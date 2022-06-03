@@ -12,8 +12,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-
-	"github.com/pelletier/go-toml"
 )
 
 type ConfigOptions struct {
@@ -665,22 +663,4 @@ func templatePresent(template string, conf *Config) bool {
 	}
 
 	return sane
-}
-
-func ReadConfig(configFile string) (*ConfigOptions, error) {
-	conf := NewConfigOptions()
-	configData, err := ioutil.ReadFile(configFile)
-	if err == nil {
-		err = toml.Unmarshal(configData, conf)
-	}
-	return conf, err
-}
-
-func ReadDefaultConfig() (*ConfigOptions, error) {
-	userhome, err := os.UserHomeDir()
-	if err != nil {
-		return NewConfigOptions(), err
-	}
-	defaultconf := filepath.Join(userhome, ".ffufrc")
-	return ReadConfig(defaultconf)
 }
