@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"ffuf/pkg/ffuf"
+	"github.com/heckintosh/ffuf/pkg/ffuf"
 )
 
 //Download results < 5MB

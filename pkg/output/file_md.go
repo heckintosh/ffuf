@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/heckintohs/ffuf/pkg/ffuf"
+	"github.com/heckintosh/ffuf/pkg/ffuf"
 )
 
 const (
