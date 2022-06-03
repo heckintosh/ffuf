@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-
-	"github.com/heckintosh/ffuf/pkg/ffuf"
 )
 
 type TimeFilter struct {
