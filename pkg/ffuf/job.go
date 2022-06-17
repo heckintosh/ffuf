@@ -266,7 +266,9 @@ func (j *Job) startExecution() []string {
 			defer wg.Done()
 			threadStart := time.Now()
 			var i string = j.runTask(nextInput, nextPosition, false)
-			result = append(result, i)
+			if i != "" {
+				result = append(result, i)
+			}
 			j.sleepIfNeeded()
 			j.Rate.Throttle()
 			threadEnd := time.Now()
