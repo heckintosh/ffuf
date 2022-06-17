@@ -239,8 +239,6 @@ func (j *Job) startExecution() []string {
 	if j.queuepos > 1 {
 		if j.Config.InputMode == "sniper" {
 			j.Output.Info(fmt.Sprintf("Starting queued sniper job (%d of %d) on target: %s", j.queuepos, len(j.queuejobs), j.Config.Url))
-		} else {
-			j.Output.Info(fmt.Sprintf("Starting queued job on target: %s", j.Config.Url))
 		}
 	}
 
@@ -468,7 +466,6 @@ func (j *Job) handleGreedyRecursionJob(resp Response) {
 		recUrl := resp.Request.Url + "/" + "FUZZ"
 		newJob := QueueJob{Url: recUrl, depth: j.currentDepth + 1, req: RecursionRequest(j.Config, recUrl)}
 		j.queuejobs = append(j.queuejobs, newJob)
-		j.Output.Info(fmt.Sprintf("Adding a new job to the queue: %s", recUrl))
 	} else {
 		j.Output.Warning(fmt.Sprintf("Maximum recursion depth reached. Ignoring: %s", resp.Request.Url))
 	}
@@ -486,7 +483,6 @@ func (j *Job) handleDefaultRecursionJob(resp Response) {
 		// We have yet to reach the maximum recursion depth
 		newJob := QueueJob{Url: recUrl, depth: j.currentDepth + 1, req: RecursionRequest(j.Config, recUrl)}
 		j.queuejobs = append(j.queuejobs, newJob)
-		j.Output.Info(fmt.Sprintf("Adding a new job to the queue: %s", recUrl))
 	} else {
 		j.Output.Warning(fmt.Sprintf("Directory found, but recursion depth exceeded. Ignoring: %s", resp.GetRedirectLocation(true)))
 	}
