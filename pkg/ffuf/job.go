@@ -398,7 +398,7 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) strin
 		j.Output.Error(fmt.Sprintf("Encountered an error while preparing request: %s\n", err))
 		j.incError()
 		log.Printf("%s", err)
-		return "ERROR"
+		return ""
 	}
 
 	resp, err := j.Runner.Execute(&req)
@@ -409,7 +409,7 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) strin
 		} else {
 			j.runTask(input, position, true)
 		}
-		return "ERROR"
+		return ""
 	}
 	if j.SpuriousErrorCounter > 0 {
 		j.resetSpuriousErrors()
