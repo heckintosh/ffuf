@@ -266,7 +266,7 @@ func (j *Job) startExecution() []string {
 			defer wg.Done()
 			threadStart := time.Now()
 			var i string = j.runTask(nextInput, nextPosition, false)
-			if i != "" {
+			if i != "" && i!= "ERROR" {
 				result = append(result, i)
 			}
 			j.sleepIfNeeded()
