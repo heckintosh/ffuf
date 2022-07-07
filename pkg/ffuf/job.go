@@ -2,7 +2,7 @@ package ffuf
 
 import (
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
 	"os/signal"
@@ -397,7 +397,9 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) strin
 	if err != nil {
 		j.Output.Error(fmt.Sprintf("Encountered an error while preparing request: %s\n", err))
 		j.incError()
-		log.Printf("%s", err)
+		log.WithFields(log.Fields{
+			"error": err,
+		}).Error()
 		return ""
 	}
 
@@ -405,7 +407,9 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) strin
 	if err != nil {
 		if retried {
 			j.incError()
-			log.Printf("%s", err)
+			log.WithFields(log.Fields{
+				"error": err,
+			}).Error()
 		} else {
 			j.runTask(input, position, true)
 		}
@@ -439,7 +443,9 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) strin
 			if err != nil {
 				j.Output.Error(fmt.Sprintf("Encountered an error while preparing replayproxy request: %s\n", err))
 				j.incError()
-				log.Printf("%s", err)
+				log.WithFields(log.Fields{
+					"error": err,
+				}).Error()
 			} else {
 				_, _ = j.ReplayRunner.Execute(&replayreq)
 			}
