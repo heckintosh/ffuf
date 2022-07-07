@@ -399,7 +399,7 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) strin
 		j.incError()
 		log.WithFields(log.Fields{
 			"error": err,
-		}).Error("Test")
+		}).Error()
 		return ""
 	}
 
@@ -445,7 +445,7 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) strin
 				j.incError()
 				log.WithFields(log.Fields{
 					"error": err,
-				}).Error("Test")
+				}).Error()
 			} else {
 				_, _ = j.ReplayRunner.Execute(&replayreq)
 			}
