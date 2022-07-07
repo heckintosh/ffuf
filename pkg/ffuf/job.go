@@ -104,7 +104,7 @@ func (j *Job) QueuedJobs() []QueueJob {
 }
 
 //Start the execution of the Job
-func (j *Job) Start() []string {
+func (j *Job) Start(log_scan *log.Logger) []string {
 	var result []string
 	if j.startTime.IsZero() {
 		j.startTime = time.Now()
@@ -144,7 +144,7 @@ func (j *Job) Start() []string {
 		j.Reset(true)
 		j.RunningJob = true
 
-		result = append(result, j.startExecution()...)
+		result = append(result, j.startExecution(log_scan)...)
 	}
 
 	err := j.Output.Finalize()
@@ -229,7 +229,7 @@ func (j *Job) Resume() {
 	}
 }
 
-func (j *Job) startExecution() []string {
+func (j *Job) startExecution(log_scan *log.Logger) []string {
 	var result []string
 	var wg sync.WaitGroup
 	wg.Add(1)
@@ -265,7 +265,7 @@ func (j *Job) startExecution() []string {
 			defer func() { <-limiter }()
 			defer wg.Done()
 			threadStart := time.Now()
-			var i string = j.runTask(nextInput, nextPosition, false)
+			var i string = j.runTask(nextInput, nextPosition, false,log_scan)
 			if i != "" && i!= "ERROR" {
 				result = append(result, i)
 			}
@@ -388,7 +388,7 @@ func (j *Job) isMatch(resp Response) bool {
 	return true
 }
 
-func (j *Job) runTask(input map[string][]byte, position int, retried bool) string {
+func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_scan *log.Logger) string {
 	var result = ""
 	basereq := j.queuejobs[j.queuepos-1].req
 	req, err := j.Runner.Prepare(input, &basereq)
@@ -397,7 +397,7 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) strin
 	if err != nil {
 		j.Output.Error(fmt.Sprintf("Encountered an error while preparing request: %s\n", err))
 		j.incError()
-		log.WithFields(log.Fields{
+		log_scan.WithFields(log.Fields{
 			"error": err,
 		}).Error()
 		return ""
@@ -407,11 +407,11 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool) strin
 	if err != nil {
 		if retried {
 			j.incError()
-			log.WithFields(log.Fields{
+			log_scan.WithFields(log.Fields{
 				"error": err,
 			}).Error()
 		} else {
-			j.runTask(input, position, true)
+			j.runTask(input, position, true,log_scan)
 		}
 		return ""
 	}
