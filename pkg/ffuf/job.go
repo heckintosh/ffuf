@@ -28,6 +28,7 @@ type Job struct {
 	Paused               bool
 	Count403             int
 	Count429             int
+	Count503			 int
 	Error                string
 	Rate                 *RateThrottle
 	startTime            time.Time
@@ -85,6 +86,11 @@ func (j *Job) inc429() {
 	j.Count429++
 }
 
+func (j *Job) inc503(){
+	j.ErrorMutex.Lock()
+	defer j.ErrorMutex.Unlock()
+	j.Count503++
+}
 //resetSpuriousErrors resets the spurious error counter
 func (j *Job) resetSpuriousErrors() {
 	j.ErrorMutex.Lock()
@@ -429,6 +435,9 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 		if resp.StatusCode == 429 {
 			j.inc429()
 		}
+		if resp.StatusCode == 503 {
+			j.inc503()
+		}
 	}
 	j.pauseWg.Wait()
 
@@ -514,6 +523,13 @@ func (j *Job) CheckStop() {
 				j.Stop()
 			}
 
+		}
+		if j.Config.StopOnAll{
+			if float64(j.Count503)/float64(j.Counter) > 0.95{
+				// Over 95% of requests are 503
+				j.Error = "Getting an unusual amount of 503 responses, exiting."
+				j.Stop()
+			}
 		}
 		if j.Config.StopOnAll && (float64(j.Count429)/float64(j.Counter) > 0.2) {
 			// Over 20% of responses are 429
