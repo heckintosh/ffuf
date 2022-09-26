@@ -13,6 +13,7 @@ import (
 var (
 	response404 = map[int]string {}
 	response503 = map[int]string {}
+	mutex = &sync.Mutex{}
 ) 
 //Job ties together Config, Runner, Input and Output
 type Job struct {
@@ -420,10 +421,21 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 		return ""
 	}
 	if resp.StatusCode == 404{
-		response404[int(resp.ContentLength)] = resp.Request.Url
+		mutex.Lock()
+		_, exists := response404[int(resp.ContentLength)]
+		mutex.Unlock()
+		if !exists{
+			response404[int(resp.ContentLength)] = resp.Request.Url
+		}
+		
 	}
 	if resp.StatusCode == 503 {
-		response503[int(resp.ContentLength)] = resp.Request.Url
+		mutex.Lock()
+		_, exists := response503[int(resp.ContentLength)]
+		mutex.Unlock()
+		if !exists{
+			response503[int(resp.ContentLength)] = resp.Request.Url
+		}
 	}
 	if j.SpuriousErrorCounter > 0 {
 		j.resetSpuriousErrors()
