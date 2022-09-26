@@ -2,15 +2,17 @@ package ffuf
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"math/rand"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
-var response404,response503,responese200 map[int]string
+
+// var response404,response503,responese200 map[int]string
 //Job ties together Config, Runner, Input and Output
 type Job struct {
 	Config               *Config
@@ -38,6 +40,8 @@ type Job struct {
 	currentDepth         int
 	calibMutex           sync.Mutex
 	pauseWg              sync.WaitGroup
+	response404          map[int]string
+	response503          map[int]string
 }
 
 type QueueJob struct {
@@ -265,8 +269,8 @@ func (j *Job) startExecution(log_scan *log.Logger) []string {
 			defer func() { <-limiter }()
 			defer wg.Done()
 			threadStart := time.Now()
-			var i string = j.runTask(nextInput, nextPosition, false,log_scan)
-			if i != "" && i!= "ERROR" {
+			var i string = j.runTask(nextInput, nextPosition, false, log_scan)
+			if i != "" && i != "ERROR" {
 				result = append(result, i)
 			}
 			j.sleepIfNeeded()
@@ -388,7 +392,7 @@ func (j *Job) isMatch(resp Response) bool {
 	return true
 }
 
-func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_scan *log.Logger) string {
+func (j *Job) runTask(input map[string][]byte, position int, retried bool, log_scan *log.Logger) string {
 	var result = ""
 	basereq := j.queuejobs[j.queuepos-1].req
 	req, err := j.Runner.Prepare(input, &basereq)
@@ -411,15 +415,15 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 				"error": err,
 			}).Error()
 		} else {
-			j.runTask(input, position, true,log_scan)
+			j.runTask(input, position, true, log_scan)
 		}
 		return ""
 	}
-	if resp.StatusCode == 404{
-		response404[int(resp.ContentLength)] = resp.Request.Url
+	if resp.StatusCode == 404 {
+		j.response404[int(resp.ContentLength)] = resp.Request.Url
 	}
 	if resp.StatusCode == 503 {
-		response503[int(resp.ContentLength)] = resp.Request.Url
+		j.response503[int(resp.ContentLength)] = resp.Request.Url
 	}
 	if j.SpuriousErrorCounter > 0 {
 		j.resetSpuriousErrors()
@@ -561,9 +565,9 @@ func (j *Job) Next() {
 	j.RunningJob = false
 }
 
-func (j *Job)get404Response()[]string{
+func (j *Job) get404Response() []string {
 	var res []string
-	for _,v := range response404{
+	for _, v := range j.response404 {
 		res = append(res, v)
 	}
 	return res
