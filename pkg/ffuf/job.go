@@ -418,12 +418,12 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 		}
 		return ""
 	}
-	if resp.StatusCode == 404{
-		response404[int(resp.ContentLength)] = resp.Request.Url
-	}
-	if resp.StatusCode == 503 {
-		response503[int(resp.ContentLength)] = resp.Request.Url
-	}
+	// if resp.StatusCode == 404{
+	// 	response404[int(resp.ContentLength)] = resp.Request.Url
+	// }
+	// if resp.StatusCode == 503 {
+	// 	response503[int(resp.ContentLength)] = resp.Request.Url
+	// }
 	if j.SpuriousErrorCounter > 0 {
 		j.resetSpuriousErrors()
 	}
