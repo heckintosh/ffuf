@@ -13,6 +13,7 @@ import (
 var (
 	response404 = map[int]string {}
 	response503 = map[int]string {}
+	mutext = &sync.Mutex{}
 ) 
 //Job ties together Config, Runner, Input and Output
 type Job struct {
@@ -279,11 +280,13 @@ func (j *Job) startExecution(log_scan *log.Logger) []string {
 		}()
 
 		if !j.RunningJob {
-			wg.Add(1)
+			// wg.Add(1)
 			defer j.Output.Warning(j.Error)
-			wg.Wait()
-			defer wg.Done()
+			// wg.Wait()
+			// defer wg.Done()
+			mutext.Lock()
 			tmp := get404Response()
+			mutext.Unlock()
 			result = append(result,  tmp...)
 			return result
 		}
@@ -291,7 +294,9 @@ func (j *Job) startExecution(log_scan *log.Logger) []string {
 	wg.Wait()
 	// fmt.Println("284 ", result)
 	j.updateProgress()
+	mutext.Lock()
 	tmp := get404Response()
+	mutext.Unlock()
 	result = append(result,  tmp...)
 	return result
 }
