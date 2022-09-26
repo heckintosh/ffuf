@@ -277,13 +277,16 @@ func (j *Job) startExecution(log_scan *log.Logger) []string {
 
 		if !j.RunningJob {
 			defer j.Output.Warning(j.Error)
-
+			tmp := get404Response()
+			result = append(result,  tmp...)
 			return result
 		}
 	}
 	wg.Wait()
 	// fmt.Println("284 ", result)
 	j.updateProgress()
+	tmp := get404Response()
+	result = append(result,  tmp...)
 	return result
 }
 
@@ -561,7 +564,7 @@ func (j *Job) Next() {
 	j.RunningJob = false
 }
 
-func (j *Job)get404Response()[]string{
+func get404Response()[]string{
 	var res []string
 	for _,v := range response404{
 		res = append(res, v)
