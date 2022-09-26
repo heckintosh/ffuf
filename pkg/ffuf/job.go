@@ -282,7 +282,6 @@ func (j *Job) startExecution(log_scan *log.Logger) []string {
 
 		if !j.RunningJob {
 			defer j.Output.Warning(j.Error)
-			result = append(result)
 			return result
 		}
 	}
