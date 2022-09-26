@@ -279,7 +279,10 @@ func (j *Job) startExecution(log_scan *log.Logger) []string {
 		}()
 
 		if !j.RunningJob {
+			wg.Add(1)
 			defer j.Output.Warning(j.Error)
+			wg.Wait()
+			defer wg.Done()
 			tmp := get404Response()
 			result = append(result,  tmp...)
 			return result
