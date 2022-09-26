@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 )
-
+var response404,response503,responese200 map[int]string
 //Job ties together Config, Runner, Input and Output
 type Job struct {
 	Config               *Config
@@ -415,6 +415,12 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 		}
 		return ""
 	}
+	if resp.StatusCode == 404{
+		response404[int(resp.ContentLength)] = resp.Request.Url
+	}
+	if resp.StatusCode == 503 {
+		response503[int(resp.ContentLength)] = resp.Request.Url
+	}
 	if j.SpuriousErrorCounter > 0 {
 		j.resetSpuriousErrors()
 	}
@@ -553,4 +559,12 @@ func (j *Job) Stop() {
 //Stop current, resume to next
 func (j *Job) Next() {
 	j.RunningJob = false
+}
+
+func (j *Job)get404Response()[]string{
+	var res []string
+	for _,v := range response404{
+		res = append(res, v)
+	}
+	return res
 }
