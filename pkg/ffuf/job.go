@@ -10,6 +10,9 @@ import (
 	"syscall"
 	"time"
 )
+var (
+	listResponse []Response
+)
 
 //Job ties together Config, Runner, Input and Output
 type Job struct {
@@ -404,6 +407,7 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 	}
 
 	resp, err := j.Runner.Execute(&req)
+	listResponse = append(listResponse, resp)
 	if err != nil {
 		if retried {
 			j.incError()
@@ -553,4 +557,8 @@ func (j *Job) Stop() {
 //Stop current, resume to next
 func (j *Job) Next() {
 	j.RunningJob = false
+}
+
+func GetListResponse()[]Response{
+	return listResponse
 }
