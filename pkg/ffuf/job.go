@@ -559,6 +559,6 @@ func (j *Job) Next() {
 	j.RunningJob = false
 }
 
-func GetListResponse()[]Response{
+func (j *Job)GetListResponse()[]Response{
 	return listResponse
 }
