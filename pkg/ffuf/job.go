@@ -11,7 +11,7 @@ import (
 	"time"
 )
 var (
-	listResponse []Response
+	AllResponses []Response
 )
 
 //Job ties together Config, Runner, Input and Output
@@ -407,7 +407,8 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 	}
 
 	resp, err := j.Runner.Execute(&req)
-	listResponse = append(listResponse, resp)
+	//add response to List dupresponse 
+	AllResponses = append(AllResponses, resp)
 	if err != nil {
 		if retried {
 			j.incError()
@@ -454,8 +455,6 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 				_, _ = j.ReplayRunner.Execute(&replayreq)
 			}
 		}
-		// j.Output.Result(resp)
-		// fmt.Println("441 ", resp.Request.Url)
 
 		// Refresh the progress indicator as we printed something out
 		j.updateProgress()
@@ -559,6 +558,6 @@ func (j *Job) Next() {
 	j.RunningJob = false
 }
 
-func (j *Job)GetListResponse()[]Response{
-	return listResponse
+func (j *Job)GetAllResponse()[]Response{
+	return AllResponses
 }
