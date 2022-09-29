@@ -109,7 +109,7 @@ func (j *Job) QueuedJobs() []QueueJob {
 //Start the execution of the Job
 func (j *Job) Start(log_scan *log.Logger) []string {
 	var result []string
-	ResetAllResponse()
+	AllResponses = []Response{}
 	if j.startTime.IsZero() {
 		j.startTime = time.Now()
 	}
@@ -394,6 +394,7 @@ func (j *Job) isMatch(resp Response) bool {
 
 func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_scan *log.Logger) string {
 	var result = ""
+	
 	basereq := j.queuejobs[j.queuepos-1].req
 	req, err := j.Runner.Prepare(input, &basereq)
 	req.Position = position
@@ -408,8 +409,8 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 	}
 
 	resp, err := j.Runner.Execute(&req)
-	//add response to List dupresponse 
-	AllResponses = append(AllResponses, resp)
+	
+	
 	if err != nil {
 		if retried {
 			j.incError()
@@ -462,6 +463,8 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 		if j.Config.Recursion && j.Config.RecursionStrategy == "greedy" {
 			j.handleGreedyRecursionJob(resp)
 		}
+		//add response to List dupresponse 
+		AllResponses = append(AllResponses, resp)
 		result += resp.Request.Url
 	}
 
@@ -561,7 +564,4 @@ func (j *Job) Next() {
 
 func (j *Job)GetAllResponse()[]Response{
 	return AllResponses
-}
-func ResetAllResponse(){
-	AllResponses = []Response{}
 }
