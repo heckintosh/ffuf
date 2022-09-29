@@ -109,6 +109,7 @@ func (j *Job) QueuedJobs() []QueueJob {
 //Start the execution of the Job
 func (j *Job) Start(log_scan *log.Logger) []string {
 	var result []string
+	ResetAllResponse()
 	if j.startTime.IsZero() {
 		j.startTime = time.Now()
 	}
@@ -560,4 +561,7 @@ func (j *Job) Next() {
 
 func (j *Job)GetAllResponse()[]Response{
 	return AllResponses
+}
+func ResetAllResponse(){
+	AllResponses = []Response{}
 }
