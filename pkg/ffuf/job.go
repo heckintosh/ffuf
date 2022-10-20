@@ -254,7 +254,7 @@ func (j *Job) startExecution(log_scan *log.Logger) []string {
 		j.CheckStop()
 
 		if !j.Running {
-			defer j.Output.Warning(j.Error)
+			// defer j.Output.Warning(j.Error)
 			break
 		}
 		j.pauseWg.Wait()
@@ -280,7 +280,7 @@ func (j *Job) startExecution(log_scan *log.Logger) []string {
 		}()
 
 		if !j.RunningJob {
-			defer j.Output.Warning(j.Error)
+			// defer j.Output.Warning(j.Error)
 
 			return result
 		}
@@ -414,9 +414,9 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 	if err != nil {
 		if retried {
 			j.incError()
-			log_scan.WithFields(log.Fields{
-				"error": err,
-			}).Error()
+			// log_scan.WithFields(log.Fields{
+			// 	"error": err,
+			// }).Error()
 		} else {
 			j.runTask(input, position, true,log_scan)
 		}
@@ -450,9 +450,9 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 			if err != nil {
 				j.Output.Error(fmt.Sprintf("Encountered an error while preparing replayproxy request: %s\n", err))
 				j.incError()
-				log.WithFields(log.Fields{
-					"error": err,
-				}).Error()
+				// log.WithFields(log.Fields{
+				// 	"error": err,
+				// }).Error()
 			} else {
 				_, _ = j.ReplayRunner.Execute(&replayreq)
 			}
