@@ -402,9 +402,9 @@ func (j *Job) runTask(input map[string][]byte, position int, retried bool,log_sc
 	if err != nil {
 		j.Output.Error(fmt.Sprintf("Encountered an error while preparing request: %s\n", err))
 		j.incError()
-		log_scan.WithFields(log.Fields{
-			"error": err,
-		}).Error()
+		// log_scan.WithFields(log.Fields{
+		// 	"error": err,
+		// }).Error()
 		return ""
 	}
 
